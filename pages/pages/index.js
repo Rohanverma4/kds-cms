@@ -17,6 +17,18 @@ export default function Pages() {
     fetchPages();
   }, []);
 
+  const handleDelete = async(id) => {
+    await fetch(`/api/pages/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    const res = await fetch('/api/pages');
+    const data = await res.json();
+    setPages(data);
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.pageHeadingContainer}>
@@ -32,6 +44,7 @@ export default function Pages() {
                 <FontAwesomeIcon icon={faEdit} className={styles.icon} />
               </Link>
               <button 
+                style={{cursor: 'pointer'}}
                 className={styles.iconLink} 
                 onClick={() => handleDelete(page.id)} // Implement handleDelete function
                 aria-label={`Delete ${page.title}`}

@@ -8,6 +8,7 @@ export default function PostDetail() {
   const { id } = router.query;
   const [post, setPost] = useState(null);
   const [content, setContent] = useState('');
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -22,6 +23,7 @@ export default function PostDetail() {
   }, [id]);
 
   const handleUpdate = async () => {
+    setLoading(true)
     await fetch(`/api/posts/${id}`, {
       method: 'PUT',
       headers: {
@@ -29,6 +31,7 @@ export default function PostDetail() {
       },
       body: JSON.stringify({ title: post.title, slug: post.slug, content }),
     });
+    setLoading(false)
     router.push('/posts');
   };
 
@@ -38,7 +41,7 @@ export default function PostDetail() {
     <div className={styles.container}>
       <h1 className={styles.postDetailh1}>{post.title}</h1>
       <WysiwygEditor value={content} onChange={setContent} className={styles.wysiwygEditor} />
-      <button onClick={handleUpdate} className={styles.button}>Update Post</button>
+      <button onClick={handleUpdate} disabled={loading} className={styles.button}>{!loading ? 'Update Post': 'Updating...'}</button>
     </div>
   );
 }

@@ -8,8 +8,10 @@ export default function NewPage() {
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
   const router = useRouter();
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
+    setLoading(true)
     e.preventDefault();
     await fetch('/api/pages', {
       method: 'POST',
@@ -18,6 +20,7 @@ export default function NewPage() {
       },
       body: JSON.stringify({ title, slug, content }),
     });
+    setLoading(false)
     router.push('/pages');
   };
 
@@ -42,7 +45,7 @@ export default function NewPage() {
           className={styles.input}
         />
         <WysiwygEditor value={content} onChange={setContent} className={styles.wysiwygEditor} />
-        <button type="submit" className={styles.button}>Create Page</button>
+        <button type="submit" disabled={loading} className={styles.button}>{!loading ? 'Create Page':'Adding Page...'}</button>
       </form>
     </div>
   );

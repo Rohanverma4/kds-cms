@@ -16,6 +16,18 @@ export default function Posts() {
     fetchPosts();
   }, []);
 
+  const handleDelete = async(id) => {
+    await fetch(`/api/posts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    const res = await fetch('/api/posts');
+    const data = await res.json();
+    setPosts(data);
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.postHeadingContainer}>
@@ -31,6 +43,7 @@ export default function Posts() {
                 <FontAwesomeIcon icon={faEdit} className={styles.icon} />
               </Link>
               <button 
+                style={{cursor: 'pointer'}}
                 className={styles.iconLink} 
                 onClick={() => handleDelete(post.id)} // Implement handleDelete function
                 aria-label={`Delete ${post.title}`}

@@ -8,6 +8,7 @@ export default function PageDetail() {
   const { id } = router.query;
   const [page, setPage] = useState(null);
   const [content, setContent] = useState('');
+  const [loading,setLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -22,6 +23,7 @@ export default function PageDetail() {
   }, [id]);
 
   const handleUpdate = async () => {
+    setLoading(true)
     await fetch(`/api/pages/${id}`, {
       method: 'PUT',
       headers: {
@@ -29,6 +31,7 @@ export default function PageDetail() {
       },
       body: JSON.stringify({ title: page.title, slug: page.slug, content }),
     });
+    setLoading(false)
     router.push('/pages');
   };
 
@@ -38,7 +41,7 @@ export default function PageDetail() {
     <div className={styles.container}>
       <h1 className={styles.pageDetailh1}>{page.title}</h1>
       <WysiwygEditor value={content} onChange={setContent} className={styles.wysiwygEditor} />
-      <button onClick={handleUpdate} className={styles.button}>Update Page</button>
+      <button onClick={handleUpdate} disabled={loading} className={styles.button}>{!loading ? 'Update Page': 'Updating...'}</button>
     </div>
   );
 }

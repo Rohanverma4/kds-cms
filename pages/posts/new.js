@@ -7,10 +7,12 @@ export default function NewPost() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
+  const [loading,setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     await fetch('/api/posts', {
       method: 'POST',
       headers: {
@@ -18,6 +20,7 @@ export default function NewPost() {
       },
       body: JSON.stringify({ title, slug, content }),
     });
+    setLoading(false)
     router.push('/posts');
   };
 
@@ -42,7 +45,7 @@ export default function NewPost() {
           className={styles.input}
         />
         <WysiwygEditor value={content} onChange={setContent} className={styles.wysiwygEditor} />
-        <button type="submit" className={styles.button}>Create Post</button>
+        <button type="submit" disabled={loading} className={styles.button}>{!loading ? 'Create Post':'Adding Post...'}</button>
       </form>
     </div>
   );

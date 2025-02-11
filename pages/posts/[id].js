@@ -6,32 +6,39 @@ import styles from '../../styles/postDetails.module.css'; // Import the CSS modu
 export default function PostDetail() {
   const router = useRouter();
   const { id } = router.query;
+  
   const [post, setPost] = useState(null);
+  const [title, setTitle] = useState('');
+  const [slug, setSlug] = useState('');
   const [content, setContent] = useState('');
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch Post Data
   useEffect(() => {
     if (id) {
       const fetchPost = async () => {
         const res = await fetch(`/api/posts/${id}`);
         const data = await res.json();
         setPost(data);
+        setTitle(data.title);
+        setSlug(data.slug);
         setContent(data.content);
       };
       fetchPost();
     }
   }, [id]);
 
+  // Update Post
   const handleUpdate = async () => {
-    setLoading(true)
+    setLoading(true);
     await fetch(`/api/posts/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ title: post.title, slug: post.slug, content }),
+      body: JSON.stringify({ title, slug, content }),
     });
-    setLoading(false)
+    setLoading(false);
     router.push('/posts');
   };
 
@@ -39,9 +46,32 @@ export default function PostDetail() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.postDetailh1}>{post.title}</h1>
-      <WysiwygEditor value={content} onChange={setContent} className={styles.wysiwygEditor} />
-      <button onClick={handleUpdate} disabled={loading} className={styles.button}>{!loading ? 'Update Post': 'Updating...'}</button>
+      <input 
+        value={title} 
+        onChange={(e) => setTitle(e.target.value)} 
+        className={styles.postDetailTitle} 
+        placeholder="Enter title"
+      />
+      <input 
+        value={slug} 
+        onChange={(e) => setSlug(e.target.value)} 
+        className={styles.postDetailTitle} 
+        placeholder="Enter slug"
+      />
+      <WysiwygEditor 
+        value={content} 
+        onChange={setContent} 
+        className={styles.wysiwygEditor} 
+      />
+
+      {/* Update Button */}
+      <button 
+        onClick={handleUpdate} 
+        disabled={loading} 
+        className={styles.button}
+      >
+        {loading ? 'Updating...' : 'Update Post'}
+      </button>
     </div>
   );
 }
